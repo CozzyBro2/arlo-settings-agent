@@ -13,16 +13,25 @@ const unarm_config = {
     AudioTargetState: "Disarmed"
 }
 
-function queryApi() {
+const quality_config = {
+    quality: "medium"
+}
+
+function updateState(url: string, config: {}) {
     for (const name of devices) {
-        api.post(`/device/${name}/arm`, unarm_config)
-            .then(function(response) {
-                console.log("success")
+        api.post(`/device/${name}/${url}`, config)
+            .then(function() {
+                console.log(`POST /device/${name}/${url} succesful.`)
             }).catch(function(err) {
-                console.log(err.message)
+                console.log(`POST /device/${name}/${url} failed: \n${err.message}`)
             })
     }
 }
 
-queryApi()
-setInterval(queryApi, 30000)
+function handleAPI() {
+    updateState("arm", unarm_config)
+    updateState("quality", quality_config)
+}
+
+handleAPI()
+setInterval(handleAPI, 30000)
